@@ -1,3 +1,0 @@
-[submodule "shared/prisma-schema"]
-	path = shared/prisma-schema
-	url = https://github.com/Grigor-star/bookeaseDB.git
