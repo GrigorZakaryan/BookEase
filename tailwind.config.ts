@@ -61,6 +61,7 @@ const config: Config = {
   },
   plugins: [
     require("tailwindcss-animate"),
+    require("daisyui"),
     plugin(function ({ addUtilities }) {
       const newUtilities = {
         ".hide-scrollbar": {

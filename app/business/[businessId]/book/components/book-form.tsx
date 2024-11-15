@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Appointment, Employee, WorkingHours } from "@prisma/client";
+import { Appointment, Employee, User, WorkingHours } from "@prisma/client";
 
 import axios from "axios";
 
@@ -9,6 +9,7 @@ import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import Avatar from "@/app/images.png";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -32,6 +33,7 @@ import { BusinessDaySlots } from "../../components/slots";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import { Social } from "@/components/auth/social";
+import { useRouter } from "next/navigation";
 
 interface ServiceProps {
   id: string;
@@ -44,13 +46,27 @@ interface ServiceProps {
   duration: string;
 }
 
+interface EmployeeProps {
+  name: string;
+  id: string;
+  email: string;
+  image: string;
+  userId: string | null;
+  isOwner: boolean;
+  status: string;
+  user?: User | null;
+  businessId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 interface BusinessProps {
   name: string;
   id: string;
   address: string;
   type: string;
   ownerId: string;
-  employees: Employee[];
+  employees: EmployeeProps[];
   appointments: Appointment[];
   workingHours: WorkingHours[];
   services: ServiceProps[];
@@ -68,9 +84,12 @@ export const BookForm = ({
   userId?: string;
 }) => {
   const [selectedServices, setSelectedServices] = useState<ServiceProps[]>([]);
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee>();
-  const [selectedDay, setSelectedDay] = useState<Date>(new Date());
+  const [selectedService, setSelectedService] = useState<ServiceProps>();
+  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeProps>();
+  const [selectedDay, setSelectedDay] = useState<Date | null>();
+  const router = useRouter();
   const [selectedTime, setSelectedTime] = useState("");
+  const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const total = selectedServices.reduce((acc, curr) => acc + curr.price, 0);
 
@@ -89,7 +108,7 @@ export const BookForm = ({
   };
 
   const onSubmit = async () => {
-    if (!selectedServices || selectedServices.length === 0) {
+    if (!selectedService) {
       toast.error("Select at least one service!");
       return;
     }
@@ -115,11 +134,13 @@ export const BookForm = ({
     modifiedDate.setHours(hours, minutes);
 
     try {
+      setLoading(true);
       const existingCustomer = await axios.get(
         `/business/${business.id}/api/customer/${userId}`
       );
 
-      if (!existingCustomer.data.id) {
+      if (!existingCustomer.data) {
+        console.log("DOING THIS SHIT!");
         const customerResponse = await axios.post(
           `/business/${business.id}/api/customer`,
           { userId: userId }
@@ -130,7 +151,7 @@ export const BookForm = ({
           `/business/${business.id}/api/appointment`,
           {
             customerId: customer.id,
-            serviceId: selectedServices[0].id,
+            serviceId: selectedService.id,
             employeeId: selectedEmployee.id,
             businessId: business.id,
             date: modifiedDate,
@@ -140,13 +161,15 @@ export const BookForm = ({
         if (appointementResponse.status === 200) {
           toast.success("Appointment created succefully!");
         }
+        router.push(`/business/${business.id}`);
+        return;
       }
 
       const appointementResponse = await axios.post(
         `/business/${business.id}/api/appointment`,
         {
           customerId: existingCustomer.data.id,
-          serviceId: selectedServices[0].id,
+          serviceId: selectedService.id,
           employeeId: selectedEmployee.id,
           businessId: business.id,
           date: modifiedDate,
@@ -156,9 +179,13 @@ export const BookForm = ({
       if (appointementResponse.status === 200) {
         toast.success("Appointment created succefully!");
       }
+
+      router.push(`/business/${business.id}/`);
     } catch (err) {
       console.log(err);
       toast.error("Something went wrong!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -230,7 +257,7 @@ export const BookForm = ({
                 {business.services.map((service) => (
                   <Alert
                     key={service.id}
-                    onClick={() => toggleService(service)}
+                    onClick={() => setSelectedService(service)}
                     className="hover:bg-primary-foreground cursor-pointer flex items-center justify-between"
                   >
                     <div>
@@ -251,11 +278,7 @@ export const BookForm = ({
                       </p>
                     </div>
                     <div>
-                      <Checkbox
-                        checked={selectedServices.some(
-                          (s) => s.id === service.id
-                        )}
-                      />
+                      <Checkbox checked={selectedService?.id === service.id} />
                     </div>
                   </Alert>
                 ))}
@@ -277,7 +300,7 @@ export const BookForm = ({
                         width={50}
                         height={50}
                         alt="img"
-                        src={employee.image}
+                        src={employee.user?.image || Avatar.src}
                         className="rounded-full"
                       />
                       <h1 className="text-sm font-semibold">{employee.name}</h1>
@@ -308,31 +331,39 @@ export const BookForm = ({
             <CardTitle className="text-2xl">{business.name}</CardTitle>
           </CardHeader>
           <CardContent>
-            <h1 className="font-semibold text-md my-3">
-              {format(selectedDay, "EEEE, MMMM d, yyyy")}, {selectedTime}
-            </h1>
-            {selectedServices.map((service) => (
+            {selectedDay && (
+              <h1 className="font-semibold text-md my-3">
+                {format(selectedDay, "EEEE, MMMM d, yyyy")}, {selectedTime}
+              </h1>
+            )}
+
+            {selectedService && (
               <Alert
-                key={service.id}
+                key={selectedService?.id}
                 className="hover:bg-primary-foreground cursor-pointer flex items-center justify-between border-0 ease-linear duration-150"
               >
                 <div>
                   <AlertTitle className="text-md font-semibold">
-                    {service.label}
+                    {selectedService?.label}
                   </AlertTitle>
-                  <p className="text-muted-foreground">{service.duration}</p>
-                  <p className="text-muted-foreground">{service.description}</p>
+                  <p className="text-muted-foreground">
+                    {selectedService?.duration}
+                  </p>
+                  <p className="text-muted-foreground">
+                    {selectedService?.description}
+                  </p>
                 </div>
                 <div>
                   <p className="font-semibold">
                     {new Intl.NumberFormat("it-IT", {
                       style: "currency",
                       currency: "EUR",
-                    }).format(service.price)}
+                    }).format(selectedService?.price || 0)}
                   </p>
                 </div>
               </Alert>
-            ))}
+            )}
+
             <Separator className="my-5" />
             {selectedEmployee && (
               <Alert className="hover:bg-primary-foreground cursor-pointer flex items-center space-x-5 border-0 ease-linear duration-150">
@@ -342,7 +373,11 @@ export const BookForm = ({
                       width={50}
                       height={50}
                       alt="img"
-                      src={selectedEmployee.image}
+                      src={
+                        selectedEmployee.user?.image ||
+                        selectedEmployee.image ||
+                        Avatar.src
+                      }
                       className="rounded-full"
                     />
                   </div>
@@ -358,19 +393,12 @@ export const BookForm = ({
               </Alert>
             )}
             {selectedEmployee && <Separator className="my-5" />}
-            <div className="flex justify-between items-center pb-10">
-              <h1 className="font-semibold">Total</h1>
-              <p className="font-semibold">
-                {new Intl.NumberFormat("it-IT", {
-                  style: "currency",
-                  currency: "EUR",
-                }).format(total)}
-              </p>
-            </div>
+
             {page === 4 ? (
               <div className="flex gap-2">
                 <Button
                   onClick={() => setPage(1)}
+                  disabled={loading}
                   className="w-full"
                   size={"lg"}
                   variant={"outline"}
@@ -378,8 +406,17 @@ export const BookForm = ({
                   Edit
                 </Button>
                 {userId ? (
-                  <Button onClick={onSubmit} className="w-full" size={"lg"}>
-                    Submit
+                  <Button
+                    disabled={loading}
+                    onClick={onSubmit}
+                    className="w-full"
+                    size={"lg"}
+                  >
+                    {loading ? (
+                      <span className="loading loading-spinner loading-sm"></span>
+                    ) : (
+                      "Continue"
+                    )}
                   </Button>
                 ) : (
                   <Dialog>
@@ -404,7 +441,14 @@ export const BookForm = ({
               </div>
             ) : (
               <Button
-                onClick={() => setPage(page + 1)}
+                disabled={loading}
+                onClick={() => {
+                  if (page === 2 && !selectedEmployee) {
+                    toast.error("Select a professional.");
+                  } else {
+                    setPage(page + 1);
+                  }
+                }}
                 className="w-full"
                 size={"lg"}
               >

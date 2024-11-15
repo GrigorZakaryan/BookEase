@@ -12,6 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Social } from "@/components/auth/social";
+import { Alert } from "@/components/ui/alert";
 
 export default async function BusinessPage(props: {
   params: Promise<{ businessId: string }>;
@@ -35,31 +36,44 @@ export default async function BusinessPage(props: {
   }
 
   return (
-    <div className="w-full h-full">
-      <h1>{business.name}</h1>
-      <div>
-        {session && (
-          <Link href={`/business/${params.businessId}/book`}>
-            <Button>Book</Button>
-          </Link>
-        )}
-        {!session && (
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button>Book</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Sign In</DialogTitle>
-                <DialogDescription>
-                  Sign in or create an account to be able to manage all your
-                  appointements
-                </DialogDescription>
-              </DialogHeader>
-              <Social redirect={`/business/${params.businessId}/book`} />
-            </DialogContent>
-          </Dialog>
-        )}
+    <div className="w-full h-full flex flex-col items-center justify-center">
+      <div className="w-full max-w-lg flex flex-col ">
+        <div className="flex flex-col">
+          <h1 className="text-4xl font-semibold font-serif">{business.name}</h1>
+          <p className="text-lg text-muted-foreground font-serif">
+            {business.address}
+          </p>
+        </div>
+        <div>
+          {session && (
+            <Link href={`/business/${params.businessId}/book`}>
+              <Alert className="mt-3 ease-linear duration-200 hover:shadow-lg">
+                <h1 className="text-xl font-semibold">Book an Appointment</h1>
+                <p className="text-muted-foreground text-balance">
+                  Book an appointment for you picking a service you want with
+                  your favourite professional.
+                </p>
+              </Alert>
+            </Link>
+          )}
+          {!session && (
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button>Book</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Sign In</DialogTitle>
+                  <DialogDescription>
+                    Sign in or create an account to be able to manage all your
+                    appointements
+                  </DialogDescription>
+                </DialogHeader>
+                <Social redirect={`/business/${params.businessId}/book`} />
+              </DialogContent>
+            </Dialog>
+          )}
+        </div>
       </div>
     </div>
   );

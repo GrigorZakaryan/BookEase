@@ -41,7 +41,7 @@ export default async function BusinessPage(props: {
       workingHours: true,
       appointments: true,
       services: true,
-      employees: true,
+      employees: { include: { user: true } },
       customers: true,
     },
   });
