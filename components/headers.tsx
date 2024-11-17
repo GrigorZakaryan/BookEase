@@ -1,5 +1,58 @@
 import Link from "next/link";
 import { MoveLeft, X } from "lucide-react";
+import { UserButton } from "./auth/user-button";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "./ui/button";
+import { Social } from "./auth/social";
+
+export const Header = ({
+  image,
+  email,
+  name,
+  isLoggedIn,
+}: {
+  isLoggedIn: boolean;
+  image?: string;
+  email?: string;
+  name?: string;
+}) => {
+  return (
+    <header className="w-full border-b">
+      <div className="w-full px-5 py-3 flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold font-serif">BookEase</h1>
+        </div>
+        {isLoggedIn ? (
+          <UserButton image={image} email={email} name={name} />
+        ) : (
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>Log In</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Sign In</DialogTitle>
+                <DialogDescription>
+                  Sign in or create an account to be able to manage all your
+                  appointements
+                </DialogDescription>
+              </DialogHeader>
+              <Social />
+            </DialogContent>
+          </Dialog>
+        )}
+      </div>
+    </header>
+  );
+};
 
 export const HeaderControl = ({ fallbackLink }: { fallbackLink: string }) => {
   return (

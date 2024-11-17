@@ -65,6 +65,7 @@ interface BusinessProps {
   id: string;
   address: string;
   type: string;
+  image: string | null;
   ownerId: string;
   employees: EmployeeProps[];
   appointments: Appointment[];
@@ -326,7 +327,7 @@ export const BookForm = ({
         </div>
       )}
       <div className="w-full px-[100px] flex justify-center">
-        <Card className="w-full max-w-lg ease-linear duration-200">
+        <Card className="w-full max-w-lg max-h-[600px] overflow-auto ease-linear duration-200">
           <CardHeader>
             <CardTitle className="text-2xl">{business.name}</CardTitle>
           </CardHeader>
@@ -336,7 +337,18 @@ export const BookForm = ({
                 {format(selectedDay, "EEEE, MMMM d, yyyy")}, {selectedTime}
               </h1>
             )}
-
+            <div>
+              {business.image && (
+                <Image
+                  className="rounded-md"
+                  src={business.image}
+                  alt="Image"
+                  width={500}
+                  height={500}
+                />
+              )}
+            </div>
+            <Separator className="my-5" />
             {selectedService && (
               <Alert
                 key={selectedService?.id}
