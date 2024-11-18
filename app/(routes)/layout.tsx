@@ -1,10 +1,13 @@
-import { BusinessCard } from "@/components/business/business-card";
+import { auth } from "@/auth";
 import { Header } from "@/components/headers";
 import { db } from "@/lib/db";
-import { auth } from "@/auth";
 import Avatar from "@/app/images.png";
 
-export default async function Home() {
+export default async function PagesLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   const businesses = await db.business.findMany();
   const session = await auth();
   return (
@@ -15,13 +18,7 @@ export default async function Home() {
         name={session?.user?.name || ""}
         email={session?.user?.email || ""}
       />
-      <div className="w-full h-full flex flex-col pt-20 bg-white">
-        <div className="w-full px-10 py-5 grid grid-cols-4">
-          {businesses.map((business) => (
-            <BusinessCard key={business.id} business={business} />
-          ))}
-        </div>
-      </div>
+      <div className="pt-16 w-full h-full">{children}</div>
     </div>
   );
 }

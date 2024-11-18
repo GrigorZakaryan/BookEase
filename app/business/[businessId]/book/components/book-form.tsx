@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Appointment, Employee, User, WorkingHours } from "@prisma/client";
+import { Appointment, User, WorkingHours } from "@prisma/client";
 
 import axios from "axios";
 
@@ -162,7 +162,7 @@ export const BookForm = ({
         if (appointementResponse.status === 200) {
           toast.success("Appointment created succefully!");
         }
-        router.push(`/business/${business.id}`);
+        router.push(`/appointments`);
         return;
       }
 

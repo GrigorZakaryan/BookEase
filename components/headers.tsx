@@ -25,10 +25,12 @@ export const Header = ({
   name?: string;
 }) => {
   return (
-    <header className="w-full border-b">
+    <header className="w-full mb-20 border-b fixed z-50 bg-white/35 backdrop-blur-lg">
       <div className="w-full px-5 py-3 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold font-serif">BookEase</h1>
+          <Link className="cursor-pointer" href={"/"}>
+            <h1 className="text-xl font-bold font-serif">BookEase</h1>
+          </Link>
         </div>
         {isLoggedIn ? (
           <UserButton image={image} email={email} name={name} />
