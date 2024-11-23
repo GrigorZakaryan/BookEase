@@ -17,14 +17,30 @@ export async function POST(
     return new NextResponse("User ID is required!", { status: 400 });
   }
 
+  const existingUser = await db.customer.findUnique({ where: { userId } });
+
   try {
-    const customer = await db.customer.create({
-      data: {
-        userId,
-        businessId: params.businessId,
-      },
-    });
-    return NextResponse.json(customer, { status: 200 });
+    if (existingUser) {
+      const customer = await db.customer.update({
+        where: { userId },
+        data: {
+          businesses: {
+            connect: { id: params.businessId },
+          },
+        },
+      });
+      return NextResponse.json(customer);
+    } else {
+      const customer = await db.customer.create({
+        data: {
+          userId,
+          businesses: {
+            connect: { id: params.businessId },
+          },
+        },
+      });
+      return NextResponse.json(customer);
+    }
   } catch (err) {
     console.log("[CUSTOMER_POST]", err);
     return new NextResponse("Something went wrong!", { status: 500 });

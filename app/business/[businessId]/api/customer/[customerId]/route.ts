@@ -16,12 +16,13 @@ export async function GET(
   }
 
   try {
-    const customer = await db.customer.findUnique({
-      where: {
-        userId: params.customerId,
-        businessId: params.businessId,
-      },
+    const business = await db.business.findUnique({
+      where: { id: params.businessId },
+      include: { customers: true },
     });
+    const customer = business?.customers.some(
+      (customer) => customer.id === params.customerId
+    );
     return NextResponse.json(customer, { status: 200 });
   } catch (err) {
     console.log("[CUSTOMER_POST]", err);

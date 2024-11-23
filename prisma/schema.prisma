@@ -87,7 +87,7 @@ model Service {
 model Employee {
   id            String          @id @default(cuid())
   name          String
-  email         String          @unique
+  email         String          
   image         String         
   userId        String?         @unique
   user          User?           @relation(fields: [userId], references: [id])
@@ -110,8 +110,7 @@ model Customer {
   email         String?
   image         String?
   appointments  Appointment[]
-  businessId    String
-  business      Business        @relation(fields: [businessId], references: [id])
+  businesses    Business[]        
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
