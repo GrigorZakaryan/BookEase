@@ -44,13 +44,13 @@ export default async function BusinessPage(props: {
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full">
-      <Card className="w-full max-w-lg flex flex-col items-center justify-center">
+      <Card className="w-full max-w-xl flex flex-col items-center justify-center">
         <CardHeader>
           <div className="flex flex-col">
-            <h1 className="text-4xl font-semibold font-serif">
+            <h1 className="text-4xl font-semibold font-serif text-balance">
               {business.name}
             </h1>
-            <p className="text-lg text-muted-foreground font-serif">
+            <p className="text-lg text-muted-foreground font-serif text-balance">
               {business.address}
             </p>
           </div>
@@ -73,7 +73,7 @@ export default async function BusinessPage(props: {
             <div>
               {session && (
                 <Link href={`/business/${params.businessId}/book`}>
-                  <Alert className="mt-3 ease-linear duration-200 hover:shadow-lg">
+                  <Alert className="mt-3 ease-linear duration-100 hover:bg-primary-foreground">
                     <h1 className="text-xl font-semibold">
                       Book an Appointment
                     </h1>
