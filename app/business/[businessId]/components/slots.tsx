@@ -93,7 +93,7 @@ export const BusinessDaySlots = ({
           </div>
         ))}
       </div>
-      <div className="flex flex-col mt-4 max-h-[500px] overflow-y-auto hide-scrollbar">
+      <div className="flex flex-col mt-4 max-h-[500px] overflow-y-auto hide-scrollbar pb-[120px] md:pb-0">
         {times.length > 0 ? (
           times.map((slot, index) => (
             <div

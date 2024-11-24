@@ -40,11 +40,11 @@ export const AppointmentForm = ({
   return (
     <Alert
       onClick={setSelectedAppointment}
-      className={`${className} p-0 pr-5 rounded-md flex space-x-4 items-center ease-linear duration-200 cursor-pointer hover:shadow-md`}
+      className={`${className} p-0 md:pr-5 rounded-md flex flex-col md:flex-row md:space-x-4 items-center ease-linear duration-200 cursor-pointer hover:shadow-md`}
     >
       {appointment.business.image && (
         <Image
-          className="rounded-tl-sm rounded-bl-sm"
+          className="rounded-tl-sm rounded-tr-sm w-full md:w-[200px]"
           width={200}
           height={200}
           src={appointment.business.image}

@@ -84,7 +84,6 @@ export const BookForm = ({
   filteredDays: Date[];
   userId?: string;
 }) => {
-  const [selectedServices, setSelectedServices] = useState<ServiceProps[]>([]);
   const [selectedService, setSelectedService] = useState<ServiceProps>();
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeProps>();
   const [selectedDay, setSelectedDay] = useState<Date | null>();
@@ -92,20 +91,12 @@ export const BookForm = ({
   const [selectedTime, setSelectedTime] = useState("");
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const total = selectedServices.reduce((acc, curr) => acc + curr.price, 0);
 
   const handleDayFromChild = (data: Date) => {
     setSelectedDay(data);
   };
   const handleTimeFromChild = (data: string) => {
     setSelectedTime(data);
-  };
-  const toggleService = (service: ServiceProps) => {
-    if (selectedServices.includes(service)) {
-      setSelectedServices((prev) => prev.filter((s) => s.id !== service.id));
-    } else {
-      setSelectedServices((prev) => [...prev, service]);
-    }
   };
 
   const onSubmit = async () => {
@@ -141,7 +132,6 @@ export const BookForm = ({
       );
 
       if (!existingCustomer.data) {
-        console.log("DOING THIS SHIT!");
         const customerResponse = await axios.post(
           `/business/${business.id}/api/customer`,
           { userId: userId }
@@ -191,9 +181,9 @@ export const BookForm = ({
   };
 
   return (
-    <div className="flex justify-between items-start pt-[50px]">
+    <div className="flex flex-col md:flex-row justify-between w-full items-start pt-[50px] px-5 md:px-0">
       {page !== 4 && (
-        <div className="w-full px-[100px]">
+        <div className="w-full md:px-[100px]">
           <Breadcrumb className="mb-7">
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -251,7 +241,7 @@ export const BookForm = ({
           </Breadcrumb>
 
           {page === 1 && (
-            <div className="mt-7 h-full max-h-[600px] overflow-y-auto">
+            <div className="mt-7 h-full max-h-[600px] w-full overflow-y-auto">
               <h1 className="text-4xl font-bold">Select Service</h1>
               <h1 className="text-2xl font-semibold mt-5">Featured services</h1>
               <div className="flex flex-col items-center space-y-4 w-full max-w-md mt-5 max-h-[500px] overflow-y-auto">
@@ -294,7 +284,9 @@ export const BookForm = ({
                   <div
                     key={employee.id}
                     onClick={() => setSelectedEmployee(employee)}
-                    className="w-[170px] h-[150px] rounded-xl border flex items-center justify-center hover:bg-primary-foreground cursor-pointer"
+                    className={`w-[170px] h-[150px] rounded-xl border flex items-center justify-center hover:bg-primary-foreground cursor-pointer ${
+                      selectedEmployee?.id === employee.id && "border-black"
+                    }`}
                   >
                     <div className="flex flex-col items-center space-y-2">
                       <Image
@@ -326,8 +318,45 @@ export const BookForm = ({
           )}
         </div>
       )}
-      <div className="w-full px-[100px] flex justify-center">
-        <Card className="w-full max-w-lg max-h-[600px] overflow-auto ease-linear duration-200">
+      <div
+        className={`w-full ${
+          page === 4 ? "hidden" : "fixed md:hidden"
+        } bottom-0 space-y-2 left-0 px-5 py-5 bg-white border-t`}
+      >
+        <Button
+          disabled={loading}
+          onClick={() => {
+            if (page === 2 && !selectedEmployee) {
+              toast.error("Select a professional.");
+            } else {
+              setPage(page + 1);
+            }
+          }}
+          className="w-full"
+          size={"lg"}
+        >
+          Continue
+        </Button>
+        <Button
+          disabled={page === 1}
+          variant={"outline"}
+          onClick={() => {
+            setPage(page - 1);
+          }}
+          className="w-full"
+          size={"lg"}
+        >
+          Back
+        </Button>
+      </div>
+      <div className="w-full md:px-[100px] flex justify-center">
+        <Card
+          className={`${
+            page !== 4
+              ? "hidden"
+              : "border-0 md:border shadow-none md:shadow-md hide-scrollbar"
+          } md:block w-full max-w-lg md:max-h-[600px] overflow-auto ease-linear duration-200`}
+        >
           <CardHeader>
             <CardTitle className="text-2xl">{business.name}</CardTitle>
           </CardHeader>
