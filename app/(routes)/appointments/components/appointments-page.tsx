@@ -1,6 +1,6 @@
 "use client";
 
-import { Appointment, Business, Employee, Service, User } from "@prisma/client";
+import { Business, User } from "@prisma/client";
 import { AppointmentForm } from "./appointment-form";
 import Avatar from "@/app/images.png";
 import {
@@ -20,49 +20,12 @@ import { Badge } from "@/components/ui/badge";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-
-interface ServiceProps {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-  label: string;
-  description: string;
-  price: number;
-  duration: string;
-  businessId: string;
-}
-interface EmployeeProps {
-  name: string;
-  id: string;
-  image: string;
-  user: User | null;
-  createdAt: Date;
-  updatedAt: Date;
-  email: string;
-  userId: string | null;
-  isOwner: boolean;
-  status: "INVITED" | "DECLINED" | "ACTIVE" | "ERROR";
-  businessId: string;
-}
-interface AppointmentsProps {
-  id: string;
-  customerId: string;
-  serviceId: string;
-  employeeId: string;
-  businessId: string;
-  business: Business;
-  service: ServiceProps;
-  employee: EmployeeProps;
-  date: Date;
-  status: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { AppointmentProps } from "@/types";
 
 export const AppointmentsPage = ({
   appointments,
 }: {
-  appointments: AppointmentsProps[];
+  appointments: AppointmentProps[];
 }) => {
   const [loading, setLoading] = useState(false);
   const upcomingAppointments = appointments.filter(
@@ -75,7 +38,7 @@ export const AppointmentsPage = ({
     (appointment) => appointment.status === "CANCELED"
   );
   const [selectedAppointment, setSelectedAppointment] =
-    useState<AppointmentsProps>(upcomingAppointments[0] || paidAppointments[0]);
+    useState<AppointmentProps>(upcomingAppointments[0] || paidAppointments[0]);
   const router = useRouter();
 
   const onCancel = async () => {
@@ -101,10 +64,10 @@ export const AppointmentsPage = ({
   return (
     <div className="w-full h-full flex items-center justify-center bg-white">
       <div className="w-full max-w-6xl my-10">
-        <div>
+        <div className="ml-5 md:ml-0">
           <h1 className="text-2xl font-semibold">Appointments</h1>
         </div>
-        <div className="w-full flex justify-between mt-7">
+        <div className="w-full flex justify-center md:justify-between mt-7">
           <div className="flex flex-col space-y-3">
             <div>
               <div className="flex items-center space-x-2">
@@ -113,15 +76,17 @@ export const AppointmentsPage = ({
                   {upcomingAppointments.length}
                 </div>
               </div>
+              <Separator className="md:hidden mt-2" />
               <div className="flex flex-col space-y-3 mt-5">
                 {upcomingAppointments.map((appointment) => (
                   <AppointmentForm
+                    selectedAppointment={selectedAppointment}
                     setSelectedAppointment={() =>
                       setSelectedAppointment(appointment)
                     }
                     className={`${
                       appointment.id === selectedAppointment?.id &&
-                      " border-black shadow-lg"
+                      "border-black shadow-lg"
                     }`}
                     key={appointment.id}
                     appointment={appointment}
@@ -129,16 +94,18 @@ export const AppointmentsPage = ({
                 ))}
               </div>
             </div>
-            <div>
+            <div className="mt-5">
               <div className="flex items-center space-x-2">
                 <h2 className="text-xl font-semibold">Paid</h2>
                 <div className="w-6 h-6 font-semibold rounded-full bg-violet-500 flex items-center text-white justify-center">
                   {paidAppointments.length}
                 </div>
               </div>
+              <Separator className="md:hidden mt-2" />
               <div className="flex flex-col space-y-3 mt-5">
                 {paidAppointments.map((appointment) => (
                   <AppointmentForm
+                    selectedAppointment={selectedAppointment}
                     setSelectedAppointment={() =>
                       setSelectedAppointment(appointment)
                     }
@@ -159,9 +126,11 @@ export const AppointmentsPage = ({
                   {canceledAppointments.length}
                 </div>
               </div>
+              <Separator className="md:hidden mt-2" />
               <div className="flex flex-col space-y-3 mt-5">
                 {canceledAppointments.map((appointment) => (
                   <AppointmentForm
+                    selectedAppointment={selectedAppointment}
                     setSelectedAppointment={() =>
                       setSelectedAppointment(appointment)
                     }
@@ -177,7 +146,7 @@ export const AppointmentsPage = ({
             </div>
           </div>
           <div>
-            <Card className="shadow-none">
+            <Card className="shadow-none hidden md:block">
               {selectedAppointment?.business.image && (
                 <Image
                   width={570}

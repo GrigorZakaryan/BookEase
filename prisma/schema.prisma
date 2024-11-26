@@ -77,7 +77,7 @@ model Service {
   price         Decimal
   duration      String
   businessId    String
-  business      Business        @relation(fields: [businessId], references: [id])
+  business      Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
   appointments  Appointment[]
 
   createdAt DateTime @default(now())
@@ -90,11 +90,11 @@ model Employee {
   email         String          
   image         String         
   userId        String?         @unique
-  user          User?           @relation(fields: [userId], references: [id])
+  user          User?           @relation(fields: [userId], references: [id], onDelete: Cascade)
   isOwner       Boolean         @default(false)
   status        EmployeeStatus  @default(INVITED)
   businessId    String
-  business      Business        @relation(fields: [businessId], references: [id])
+  business      Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
   appointments  Appointment[]
 
   createdAt DateTime @default(now())
@@ -104,7 +104,7 @@ model Employee {
 model Customer {
   id            String          @id @default(cuid())
   userId        String?         @unique
-  user          User?           @relation(fields: [userId], references: [id])
+  user          User?           @relation(fields: [userId], references: [id], onDelete: Cascade)
   name          String?
   phone         String?
   email         String?
@@ -133,7 +133,7 @@ enum EmployeeStatus {
 model WorkingHours {
   id           String          @id @default(cuid())
   businessId   String   @unique
-  business     Business @relation(fields: [businessId], references: [id])
+  business     Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
   
   mondayStart  String?
   mondayEnd    String?
@@ -167,7 +167,7 @@ model Appointment {
   employeeId    String
   employee      Employee        @relation(fields: [employeeId], references: [id])
   businessId    String
-  business      Business        @relation(fields: [businessId], references: [id])
+  business      Business        @relation(fields: [businessId], references: [id], onDelete: Cascade)
   date          DateTime
   status        AppointmentStatus          @default(UPCOMING)
 

@@ -45,7 +45,7 @@ export default async function Home() {
         </BackgroundBeamsWithCollision>
         <div className="w-full h-full flex flex-col pt-20 bg-white px-10">
           <h1 className="text-2xl font-semibold">Recomended Businesses</h1>
-          <div className="w-full  py-5 grid md:grid-cols-4 grid-cols-1 md:space-x-2 space-y-2">
+          <div className="w-full py-5 grid md:grid md:grid-cols-4 grid-cols-1 gap-2 space-y-2 md:space-y-0">
             {businesses.map((business) => (
               <BusinessCard key={business.id} business={business} />
             ))}
