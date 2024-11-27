@@ -256,7 +256,7 @@ export const AppointmentsPage = ({
           </div>
         ) : (
           <div className="mt-5 px-5 md:px-0">
-            <h1>You don't have any appointment yet.</h1>
+            <h1>You don&apos;t have any appointment yet.</h1>
           </div>
         )}
       </div>
