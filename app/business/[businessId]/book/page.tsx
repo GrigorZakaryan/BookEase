@@ -10,6 +10,10 @@ export default async function BusinessPage(props: {
   const params = await props.params;
   const session = await auth();
 
+  if (!session?.user) {
+    redirect(`/business/${params.businessId}`);
+  }
+
   const days = [];
   const currentDate = new Date();
   const targetDate = new Date(currentDate);

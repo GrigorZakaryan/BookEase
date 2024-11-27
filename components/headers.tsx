@@ -25,7 +25,7 @@ export const Header = ({
   name?: string;
 }) => {
   return (
-    <header className="w-full mb-20 fixed z-50 bg-white/35 backdrop-blur-lg border-b border-white">
+    <header className="w-full fixed z-50 bg-white/35 top-0 backdrop-blur-lg border-b border-white">
       <div className="w-full px-5 py-3 flex items-center justify-between">
         <div>
           <Link className="cursor-pointer" href={"/"}>

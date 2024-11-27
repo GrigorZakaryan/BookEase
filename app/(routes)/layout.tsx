@@ -1,15 +1,18 @@
 import { auth } from "@/auth";
 import { Header } from "@/components/headers";
-import { db } from "@/lib/db";
 import Avatar from "@/app/images.png";
+import { redirect } from "next/navigation";
 
 export default async function PagesLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const businesses = await db.business.findMany();
   const session = await auth();
+
+  if (!session?.user) {
+    redirect("/");
+  }
   return (
     <div>
       <Header
