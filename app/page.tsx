@@ -44,9 +44,6 @@ export default async function Home() {
                   </div>
                 </div>
               </h1>
-              <div className="mt-3">
-                <SearchInput />
-              </div>
             </div>
           </div>
         </BackgroundBeamsWithCollision>
