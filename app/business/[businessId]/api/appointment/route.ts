@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { pusherServer } from "@/lib/pusher";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(
@@ -23,7 +24,7 @@ export async function POST(
   }
 
   try {
-    await db.appointment.create({
+    const appointment = await db.appointment.create({
       data: {
         customerId,
         serviceId,
@@ -31,6 +32,16 @@ export async function POST(
         date,
         businessId: businessId || params.businessId,
       },
+      include: {
+        service: true,
+        employee: true,
+        customer: { include: { user: true } },
+      },
+    });
+
+    await pusherServer.trigger(params.businessId, "appointment-created", {
+      ...appointment,
+      date,
     });
     return new NextResponse("Appointment added succesfully!", { status: 200 });
   } catch (err) {
