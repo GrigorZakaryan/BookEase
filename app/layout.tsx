@@ -29,6 +29,13 @@ export default async function RootLayout({
   return (
     <html lang="en" className="bg-white">
       <head>
+        <title>
+          BookEase - Best platform for managing your beauty salon appointments
+        </title>
+        <meta
+          name="description"
+          content="BookEase, a platform where you can pick your favourite beaty and welness salon and book an appointment whever you want."
+        />
         <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7572839093853820"
