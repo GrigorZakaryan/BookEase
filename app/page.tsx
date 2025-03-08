@@ -69,9 +69,9 @@ export default async function Home() {
               </div>
             </h1>
             <p className="text-center md:text-left md:max-w-[600px] text-md md:text-2xl font-medium pl-1">
-              It is a long established fact that a reader will be distracted by
-              the readable content of a page when looking at its layout. The
-              point of using Lorem Ipsum is that it has a more-or-less normal
+              BookEase helps businesses connect with customers looking for
+              beauty and wellness services. Our platform ensures a seamless and
+              enjoyable experience for all users.
             </p>
             <div className="flex items-center">
               <Link

@@ -279,12 +279,12 @@ export const BookForm = ({
           {page === 2 && (
             <div className="mt-7">
               <h1 className="text-4xl font-bold">Select Professional</h1>
-              <div className="grid grid-cols-3 gap-2 w-full max-w-md mt-5 max-h-[500px] overflow-y-auto">
+              <div className="flex flex-wrap gap-4 w-full max-w-md mt-5 max-h-[500px] overflow-y-auto">
                 {business.employees.map((employee) => (
                   <div
                     key={employee.id}
                     onClick={() => setSelectedEmployee(employee)}
-                    className={`w-[170px] h-[150px] rounded-xl border flex items-center justify-center hover:bg-primary-foreground cursor-pointer ${
+                    className={`w-[170px] h-[150px] rounded-xl border flex items-center justify-center duration-200 hover:bg-primary-foreground cursor-pointer ${
                       selectedEmployee?.id === employee.id && "border-black"
                     }`}
                   >
